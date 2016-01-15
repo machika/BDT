@@ -22,6 +22,7 @@ public abstract class Item {
     protected Resources mResources;
     protected int mRid;
     protected boolean mContacted;
+    protected int mYBoarder;
 
     Item(int x, int y, int w, int h, int vx, int vy, boolean background, boolean good, int probability, Resources resources) {
         mX = x;
@@ -36,6 +37,7 @@ public abstract class Item {
         mResources = resources;
         mRid = 0;
         mContacted = false;
+        mYBoarder = 0;
     };
 
     public boolean isBackground() { return mBackground; }
@@ -72,6 +74,10 @@ public abstract class Item {
 
     public void setContacted(boolean b) { mContacted = b; }
     public boolean isContacted() { return mContacted; }
+
+    public void setYBoarder(int YBoarder) {
+        mYBoarder = YBoarder;
+    }
 }
 
 

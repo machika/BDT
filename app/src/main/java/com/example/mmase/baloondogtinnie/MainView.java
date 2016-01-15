@@ -27,19 +27,12 @@ public class MainView extends SurfaceView
 implements SurfaceHolder.Callback, Runnable {
 
     private int mScore;
-    private int mTinnieX;
-    private int mTinnieY;
-    private int mTinnieW; //Width
-    private int mTinnieH; //Height
-    private int mTinnieVx; //verocity
-    private int mTinnieVy; //verocity
+    private Item mTinnie;
     private int mW;
     private int mH;
     private Display mDisplay;
-    private final double gravity = 0.3; //g
     private SurfaceHolder mHolder;
     private Thread mThread;
-    private Bitmap mTinnieBmp;
     private Paint mPaint;
     private Resources mResources;
     private enum CURRENT_STATUS { TITLE, ACTION, };
@@ -59,7 +52,7 @@ implements SurfaceHolder.Callback, Runnable {
 
         //Preparation
         mResources = getResources();
-        mTinnieBmp = BitmapFactory.decodeResource(mResources, R.drawable.tinnie);
+        //mTinnieBmp = BitmapFactory.decodeResource(mResources, R.drawable.tinnie);
         //setBackgroundColor(Color.WHITE);
 
         mScore = 0;
@@ -67,11 +60,7 @@ implements SurfaceHolder.Callback, Runnable {
         mPaint.setAntiAlias(true);
         mPaint.setTextSize(200);
         //mPaint.setTypeface(Typeface.BOLD);
-        mTinnieX = 200;
-        mTinnieY = 300;
-        mTinnieW = 150;
-        mTinnieH = 215;
-        Log.i(TAG, "mTinnieW=" + String.valueOf(mTinnieW) + ", mTinnieH=" + String.valueOf(mTinnieH) + ", View Heiht=" + getHeight());
+        mTinnie = new Tinnie(200, 300, 150, 215, 0, 1, getResources(), (int)mTimeDelta);
 
         mW = 0;
         mH = 0;
@@ -110,13 +99,14 @@ implements SurfaceHolder.Callback, Runnable {
         mHolder.setFixedSize(w, h);
         mW = w;
         mH = h;
+        mTinnie.setYBoarder(h);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            mTinnieVy = mTinnieVy - 20;
-            Log.i(TAG, "Up! Vy=" + String.valueOf(mTinnieVy));
+            mTinnie.setVy(mTinnie.getVy() - 20);
+            Log.i(TAG, "Up! Vy=" + String.valueOf(mTinnie.getVy()));
         }
         return true;
     }
@@ -196,14 +186,14 @@ implements SurfaceHolder.Callback, Runnable {
                 }
 
                 //draw Tinnie
-                drawTinnie(canvas);
+                mTinnie.drawMyselfAndCalcurateNext(canvas);
 
                 //Judge collision and show effect if necessary
                 if (mExistingForegroundItemList.size() > 0) {
                     for (Item item : mExistingForegroundItemList) {
                         if (item.isBackground() != true && item.isContacted() == false) {
-                            int centerXOfTinnie = mTinnieX + mTinnieW / 2;
-                            int centerYOfTinnie = mTinnieY + mTinnieH / 2;
+                            int centerXOfTinnie = mTinnie.getX() + mTinnie.getW() / 2;
+                            int centerYOfTinnie = mTinnie.getY() + mTinnie.getH() / 2;
                             if ((centerXOfTinnie >= item.getX() && centerXOfTinnie <= item.getX() + item.getW()) &&
                                     (centerYOfTinnie >= item.getY() && centerYOfTinnie <= item.getY() + item.getY())) {
                                 Log.i(TAG, "collision!");
@@ -230,21 +220,6 @@ implements SurfaceHolder.Callback, Runnable {
             } catch (InterruptedException ex) {
                     Log.w(TAG, "interrupted");
             }
-        }
-    }
-
-    private void drawTinnie(Canvas canvas) {
-        Rect dstRect = new Rect(mTinnieX, mTinnieY, mTinnieX + mTinnieW, mTinnieY + mTinnieH);
-        canvas.drawBitmap(mTinnieBmp, null, dstRect, mPaint);
-
-        //Calcurate next position
-        mTinnieVy = mTinnieVy + (int) (0.5 * gravity * mTimeDelta);
-        if(mTinnieY + mTinnieH + mTinnieVy < mH && mTinnieY + mTinnieVy > 0) {
-            mTinnieY = mTinnieY + mTinnieVy;
-        }
-        else  {
-            mTinnieVy = (int) (- 0.8 * mTinnieVy);
-            mTinnieY = mTinnieY + mTinnieVy;
         }
     }
 
