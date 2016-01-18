@@ -1,6 +1,7 @@
 package com.example.mmase.baloondogtinnie;
 
 import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 
 /**
  * Created by mmase on 2016/01/15.
@@ -31,7 +32,7 @@ public class Tinnie extends Item {
         if (mStatusChangeCount > 0) {
             mStatusChangeCount = mStatusChangeCount - 1;
             if (mStatusChangeCount <= 0) {
-                setRid(R.drawable.tinnie);
+                changeBmp(R.drawable.tinnie);
             }
         }
         mVy = mVy + (int) (0.5 * gravity * mTimeDelta);
@@ -50,14 +51,14 @@ public class Tinnie extends Item {
 
     public void changeStatusDamaged() {
         mStatus = TinnieStatus.DAMAGED;
-        mStatusChangeCount = 500;
-        setRid(R.drawable.tinnie_damage);
+        mStatusChangeCount = 50;
+        changeBmp(R.drawable.tinnie_damage);
     }
 
     public void changeStatusHappy() {
         mStatus = TinnieStatus.HAPPY;
-        mStatusChangeCount = 500;
-        setRid(R.drawable.tinnie_happy);
+        mStatusChangeCount = 50;
+        changeBmp(R.drawable.tinnie_happy);
     }
 
 }

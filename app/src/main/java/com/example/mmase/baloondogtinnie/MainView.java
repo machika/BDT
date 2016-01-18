@@ -199,8 +199,10 @@ implements SurfaceHolder.Callback, Runnable {
                                 Log.i(TAG, "collision!");
                                 item.setContacted(true);
                                 if (item.isGood()) {
+                                    mTinnie.changeStatusHappy();
                                     mScore = mScore + 1;
                                 } else {
+                                    mTinnie.changeStatusDamaged();
                                     mScore = mScore - 1;
                                 }
                             }

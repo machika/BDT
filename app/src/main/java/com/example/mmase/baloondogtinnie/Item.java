@@ -79,9 +79,12 @@ public abstract class Item {
         mYBoarder = YBoarder;
     }
 
-    protected void setRid(int rid) {
-        mRid = rid;
+    public void changeBmp(int rid) {
+        mBmp = BitmapFactory.decodeResource(mResources, rid);
     }
+    public void changeStatusDamaged() { }
+    public void changeStatusHappy() { }
+
 }
 
 
