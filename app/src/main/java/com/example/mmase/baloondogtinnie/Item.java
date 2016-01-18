@@ -78,6 +78,10 @@ public abstract class Item {
     public void setYBoarder(int YBoarder) {
         mYBoarder = YBoarder;
     }
+
+    protected void setRid(int rid) {
+        mRid = rid;
+    }
 }
 
 
