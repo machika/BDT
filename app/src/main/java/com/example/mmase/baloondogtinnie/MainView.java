@@ -19,6 +19,7 @@ import android.view.SurfaceView;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.locks.Lock;
 
 /**
  * Created by mmase on 2016/01/12.
@@ -46,6 +47,7 @@ implements SurfaceHolder.Callback, Runnable {
 
     private ArrayList<Item> mExistingForegroundItemList;
     private final int mMaxForegroundItemsNum = 3; //soft limit
+    private final Object mExistingForegroundItemLock;
 
     public MainView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -72,6 +74,7 @@ implements SurfaceHolder.Callback, Runnable {
         mStatus = CURRENT_STATUS.TITLE;
 
         mExistingForegroundItemList = new ArrayList<Item>();
+        mExistingForegroundItemLock = new Object();
         mExistingBackgroundItemList = new ArrayList<Item>();
 
     }
@@ -159,13 +162,15 @@ implements SurfaceHolder.Callback, Runnable {
                     // else if .... other items
                 }
                 //draw or remove items
-                if (mExistingBackgroundItemList.size() > 0) {
-                    Iterator<Item> it = mExistingBackgroundItemList.iterator();
-                    while (it.hasNext()) {
-                        Item curItem = it.next();
-                        curItem.drawMyselfAndCalcurateNext(canvas);
-                        if (curItem.getX() == 0) { // Reached very left
-                            it.remove();
+                synchronized(mExistingForegroundItemLock) {
+                    if (mExistingBackgroundItemList.size() > 0) {
+                        Iterator<Item> it = mExistingBackgroundItemList.iterator();
+                        while (it.hasNext()) {
+                            Item curItem = it.next();
+                            curItem.drawMyselfAndCalcurateNext(canvas);
+                            if (curItem.getX() == 0) { // Reached very left
+                                it.remove();
+                            }
                         }
                     }
                 }
