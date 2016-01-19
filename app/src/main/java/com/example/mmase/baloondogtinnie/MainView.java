@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.media.MediaPlayer;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
@@ -17,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.locks.Lock;
@@ -49,6 +51,8 @@ implements SurfaceHolder.Callback, Runnable {
     private final int mMaxForegroundItemsNum = 3; //soft limit
     private final Object mExistingForegroundItemLock;
 
+    private MediaPlayer mMp;
+
     public MainView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -77,12 +81,19 @@ implements SurfaceHolder.Callback, Runnable {
         mExistingForegroundItemLock = new Object();
         mExistingBackgroundItemList = new ArrayList<Item>();
 
+
+        //background music
+        mMp = MediaPlayer.create(getContext(), R.raw.background_music);
+        mMp.setLooping(true);
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        if (mThread != null)
+        if (mThread != null) {
             mThread.start();
+            mMp.seekTo(0);
+            mMp.start();
+        }
     }
 
     @Override
@@ -93,7 +104,8 @@ implements SurfaceHolder.Callback, Runnable {
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         mThread  = null;
-
+        mMp.stop();
+        mMp.release();
     }
 
     @Override
